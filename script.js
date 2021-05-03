@@ -87,13 +87,10 @@ handleReadTextButton.addEventListener('click', (event) => {
   var utterThisBottom = new SpeechSynthesisUtterance(bottomText);
 
   var selectedOption = voiceSelect.selectedOptions[0].getAttribute('data-name');
-  console.log(voices);
   for(var i = 0; i < voices.length ; i++) {
-    console.log(voices[i]);
     if(voices[i].name === selectedOption) {
       utterThisTop.voice = voices[i];
       utterThisBottom.voice = voices[i];
-      console.log(voices[i]);
     }
   }
   utterThisTop.volume = volume.value/100;
