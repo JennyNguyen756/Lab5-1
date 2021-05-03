@@ -1,10 +1,67 @@
 // script.js
 
 const img = new Image(); // used to load image from <input> and draw to canvas
+const canvas = document.getElementById('user-image');
+const ctx = canvas.getContext("2d");
+const handleFileButton = document.getElementById('image-input');
+const handleSubmitButton = document.querySelector('button[type="submit"]');
+const handleClearButton = document.querySelector('button[type="reset"]');
+const handleReadTextButton = document.querySelector('button[type="button"]');
+
+//Toggles generate button off. Toggles clear and read text on
+function generateOff() {
+  handleClearButton.disabled = false;
+  handleReadTextButton.disabled = false;
+  handleSubmitButton.disabled = true;
+}
+
+//Toggles generate button on. Toggles clear and read text off
+function generateOn() {
+  handleClearButton.disabled = true;
+  handleReadTextButton.disabled = true;
+  handleSubmitButton.disabled = false;
+}
+
+//Clear Button Function
+handleClearButton.addEventListener('click', (event) => {
+  event.preventDefault();
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  generateOn();
+});
+
+//Generate Button Function
+handleSubmitButton.addEventListener('click', (event) => {
+  event.preventDefault();
+  const topText = document.getElementById('text-top').value;
+  const bottomText = document.getElementById('text-bottom').value;
+  ctx.textAlign = "center";
+  ctx.fillStyle = "white";
+  ctx.font = "20px Arial";
+  ctx.fillText(topText, canvas.width/2, canvas.height*.1);
+  ctx.fillText(bottomText, canvas.width/2, canvas.height*.9);
+  generateOff();
+
+});
+
+//Fires when user interacts with file button
+handleFileButton.addEventListener('change', (event) => {
+  const userImage = event.target.files[0];
+  const objectURL = URL.createObjectURL(userImage);
+  img.src = objectURL;
+  img.setAttribute("alt", userImage.name);
+});
+
 
 // Fires whenever the img object loads a new image (such as with img.src =)
 img.addEventListener('load', () => {
   // TODO
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = "black";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  const {width, height, startX, startY} = getDimmensions(canvas.width, canvas.height, img.width, img.height);
+  ctx.drawImage(img, startX, startY, width, height );
+  generateOn();
+
 
   // Some helpful tips:
   // - Fill the whole Canvas with black first to add borders on non-square images, then draw on top
