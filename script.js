@@ -7,6 +7,14 @@ const handleFileButton = document.getElementById('image-input');
 const handleSubmitButton = document.querySelector('button[type="submit"]');
 const handleClearButton = document.querySelector('button[type="reset"]');
 const handleReadTextButton = document.querySelector('button[type="button"]');
+const voiceList = document.getElementById("voice-selection");
+const volume = document.querySelector('input[type="range"]');
+
+//Remove "No Available voice options"
+const removeOption = document.querySelector('option[value="none"]');
+removeOption.remove();
+voiceList.disabled = false;
+
 
 //Toggles generate button off. Toggles clear and read text on
 function generateOff() {
@@ -21,6 +29,75 @@ function generateOn() {
   handleReadTextButton.disabled = true;
   handleSubmitButton.disabled = false;
 }
+
+volume.addEventListener('input', (event) => {
+  let i = 0;
+  let currVol = event.target.value;
+  volume.value = currVol;
+  if (67 <= currVol && currVol <= 100) {
+    i = 3;
+  } 
+  else if(34 <= currVol && currVol <= 66){
+    i = 2;
+  }
+  else if(1 <= currVol && currVol <= 33){
+    i = 1;
+  }
+  else{
+    i = 0;
+  }
+  document.getElementById("volume-group").children[0].setAttribute("src", `icons/volume-level-${i}.svg`);
+});
+
+//Populates speech list
+var synth = window.speechSynthesis;
+function populateVoiceList() {
+  if(typeof speechSynthesis === 'undefined') {
+    return;
+  }
+
+  var voices = speechSynthesis.getVoices();
+
+  for(var i = 0; i < voices.length; i++) {
+    var option = document.createElement('option');
+    option.textContent = voices[i].name + ' (' + voices[i].lang + ')';
+
+    if(voices[i].default) {
+      option.textContent += ' -- DEFAULT';
+    }
+
+    option.setAttribute('data-lang', voices[i].lang);
+    option.setAttribute('data-name', voices[i].name);
+    voiceList.appendChild(option);
+  }
+}
+populateVoiceList();
+if (typeof speechSynthesis !== 'undefined' && speechSynthesis.onvoiceschanged !== undefined) {
+  speechSynthesis.onvoiceschanged = populateVoiceList;
+}
+
+//Read Text Button Function
+handleReadTextButton.addEventListener('click', (event) => {
+  event.preventDefault();
+  var voiceSelect = document.querySelector('select');
+  var voices = [];
+  const topText = document.getElementById('text-top').value;
+  const bottomText = document.getElementById('text-bottom').value;
+  var utterThisTop = new SpeechSynthesisUtterance(topText);
+  var utterThisBottom = new SpeechSynthesisUtterance(bottomText);
+
+  var selectedOption = voiceSelect.selectedOptions[0].getAttribute('data-name');
+  for(var i = 0; i < voices.length ; i++) {
+    if(voices[i].name === selectedOption) {
+      utterThis.voice = voices[i];
+    }
+  }
+  utterThisTop.volume = volume.value/100;
+  utterThisBottom.volume = volume.value/100;
+  synth.speak(utterThisTop);
+  synth.speak(utterThisBottom);
+});
+
 
 //Clear Button Function
 handleClearButton.addEventListener('click', (event) => {
