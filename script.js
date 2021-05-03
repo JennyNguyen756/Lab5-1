@@ -113,9 +113,12 @@ handleSubmitButton.addEventListener('click', (event) => {
   const bottomText = document.getElementById('text-bottom').value;
   ctx.textAlign = "center";
   ctx.fillStyle = "white";
-  ctx.font = "20px Arial";
+  ctx.strokeStyle = "black";
+  ctx.font = "30px Arial";
   ctx.fillText(topText, canvas.width/2, canvas.height*.1);
   ctx.fillText(bottomText, canvas.width/2, canvas.height*.9);
+  ctx.strokeText(topText, canvas.width/2, canvas.height*.1);
+  ctx.strokeText(bottomText, canvas.width/2, canvas.height*.9);
   generateOff();
 
 });
